@@ -5,8 +5,8 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import A4
+from textwrap import wrap
 import uuid
-import os
 
 # 註冊 Windows 中文字型
 pdfmetrics.registerFont(TTFont('MicrosoftJhengHei', 'C:/Windows/Fonts/msjh.ttc'))
@@ -30,17 +30,34 @@ def analyze_file(file, prompt):
     csv_path = f"{filename_prefix}_result.csv"
     pdf_path = f"{filename_prefix}_result.pdf"
 
-    df.to_csv(csv_path, index=False)
+    # ✅ 匯出 CSV：避免中文亂碼（用 utf_8_sig）
+    df.to_csv(csv_path, index=False, encoding='utf_8_sig')
 
-    # 匯出 PDF
+    # ✅ 匯出 PDF：避免超出與亂碼
     c = canvas.Canvas(pdf_path, pagesize=A4)
     c.setFont("MicrosoftJhengHei", 12)
-    c.drawString(100, 800, f"Gemini 分析指令：{prompt[:40]}")
-    c.drawString(100, 780, "分析結果（前幾行）：")
-    y = 760
-    for line in result.split("\n")[:25]:
-        c.drawString(100, y, line[:60])
-        y -= 20
+    width, height = A4
+    x = 50
+    y = height - 50
+
+    # 標題與說明
+    c.drawString(x, y, f"Gemini 分析指令：{prompt[:50]}")
+    y -= 30
+    c.drawString(x, y, "分析結果：")
+    y -= 20
+
+    # 逐行畫分析結果，自動換頁換行
+    lines = result.split("\n")
+    for line in lines:
+        wrapped_lines = wrap(line, width=90)  # 每行限制字數
+        for wrap_line in wrapped_lines:
+            if y < 50:
+                c.showPage()
+                c.setFont("MicrosoftJhengHei", 12)
+                y = height - 50
+            c.drawString(x, y, wrap_line)
+            y -= 20
+
     c.save()
 
     return result, csv_path, pdf_path
