@@ -8,3 +8,7 @@
 
 
 [期末專題第二次說明影片](https://youtu.be/UaPolU0nDrs)
+
+[期末專題介紹影片](https://youtu.be/JJ5vI5YMOdg)
+
+[簡報連結](https://www.canva.com/design/DAGoErmyy3M/tEsi1HULUEm91X9mT3oqDg/edit?utm_content=DAGoErmyy3M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
